@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";  // ✅ Image bileşenini import ettik
 import Link from "next/link";
-import { BrowserRouter as Router, Routes, Route } from "react-router"
-import Fruits from "./page/fruits/page";
+//import { BrowserRouter as Router, Routes, Route } from "react-router"
+//import Fruits from "./page/fruits/page";
 
 
 export default function Home() {
