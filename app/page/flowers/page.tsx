@@ -5,7 +5,21 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
-const flowers = [
+interface Item {
+  name: string;
+  image: string;
+  info: string;
+  price: string;
+}
+
+interface Category {
+  category: string;
+  image: string;
+  description: string;
+  items: Item[];
+}
+
+const flowers: Category[] = [
   {
     category: "Fındık Ürünleri",
     image: "/hazelnut-main.jpg",
@@ -49,13 +63,13 @@ const flowers = [
 ];
 
 export default function FlowersPage() {
-  const [activeCategory, setActiveCategory] = useState(null);
-  const categoryRefs = useRef({});
-  const [cart, setCart] = useState([]);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [cart, setCart] = useState<Item[]>([]);
   const [showCart, setShowCart] = useState(false);
-  const [checkoutStep, setCheckoutStep] = useState(null);
+  const [checkoutStep, setCheckoutStep] = useState<string | null>(null);
 
-  const handleCategoryClick = (categoryName) => {
+  const handleCategoryClick = (categoryName: string) => {
     setActiveCategory(activeCategory === categoryName ? null : categoryName);
     setTimeout(() => {
       categoryRefs.current[categoryName]?.scrollIntoView({
@@ -65,11 +79,11 @@ export default function FlowersPage() {
     }, 300);
   };
 
-  const addToCart = (item) => {
+  const addToCart = (item: Item) => {
     setCart([...cart, item]);
   };
 
-  const removeFromCart = (index) => {
+  const removeFromCart = (index: number) => {
     setCart(cart.filter((_, i) => i !== index));
   };
 
@@ -80,6 +94,7 @@ export default function FlowersPage() {
 
   return (
     <div className="bg-[#F8F1E5] text-gray-900 font-sans relative min-h-screen">
+      {/* Background video & overlay */}
       <video autoPlay loop muted playsInline className="fixed top-0 left-0 w-full h-full object-cover z-0 blur-lg">
         <source src="/bg.mp4" type="video/mp4" />
       </video>
@@ -108,7 +123,7 @@ export default function FlowersPage() {
             </ul>
           </nav>
 
-          {/* Sepet Butonu */}
+          {/* Cart button */}
           <button
             onClick={() => setShowCart(true)}
             className="relative px-4 py-2 bg-[#FFA45B] text-white rounded-lg font-semibold"
@@ -117,11 +132,8 @@ export default function FlowersPage() {
           </button>
         </header>
 
-        {/* Catalog */}
-        <section
-          id="catalog"
-          className="relative text-white py-40 px-6 lg:px-24"
-        >
+        {/* Catalog Section */}
+        <section id="catalog" className="relative text-white py-40 px-6 lg:px-24">
           <h2
             className="relative text-5xl font-bold text-center mb-16 bg-cover bg-center py-24 text-white rounded-2xl overflow-hidden"
             style={{ backgroundImage: `url('/arkaplan.jpg')` }}
@@ -134,9 +146,9 @@ export default function FlowersPage() {
             {flowers.map((category, index) => (
               <div
                 key={index}
-                ref={(el) => (categoryRefs.current[category.category] = el)}
                 className="mb-24"
               >
+                {/* Category Header */}
                 <motion.div
                   initial={{ opacity: 0, x: -50 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -166,14 +178,13 @@ export default function FlowersPage() {
                       transition={{ duration: 1, delay: 0.2 }}
                       className="text-lg opacity-80 leading-relaxed"
                     >
-                      <h3 className="text-5xl font-semibold mb-6">
-                        {category.category}
-                      </h3>
+                      <h3 className="text-5xl font-semibold mb-6">{category.category}</h3>
                       <p>{category.description}</p>
                     </motion.div>
                   </div>
                 </motion.div>
 
+                {/* Category Items */}
                 {activeCategory === category.category && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -181,15 +192,15 @@ export default function FlowersPage() {
                     transition={{ duration: 0.5 }}
                     className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
                   >
-                    {category.items.map((fruit, idx) => (
+                    {category.items.map((item, idx) => (
                       <div
                         key={idx}
                         className="relative w-full h-96 bg-white/10 backdrop-blur-xl shadow-2xl border border-white/20 rounded-2xl p-4 flex flex-col items-center overflow-hidden transition-transform duration-500 hover:scale-105"
                       >
                         <div className="relative w-full h-60 rounded-t-xl overflow-hidden shadow-lg border-b-4 border-white/30">
                           <Image
-                            src={fruit.image}
-                            alt={fruit.name}
+                            src={item.image}
+                            alt={item.name}
                             layout="fill"
                             objectFit="cover"
                             className="transition-opacity duration-500 hover:opacity-100"
@@ -197,18 +208,11 @@ export default function FlowersPage() {
                           />
                         </div>
                         <div className="relative w-full flex flex-col items-center text-center p-4 bg-black/50 backdrop-blur-lg rounded-b-xl mt-4 shadow-lg">
-                          <h3 className="text-2xl font-semibold text-white">
-                            {fruit.name}
-                          </h3>
-                          <p className="mt-2 text-gray-300 text-sm">
-                            {fruit.info}
-                          </p>
-                          <p className="mt-2 text-lg font-bold text-[#FFA45B]">
-                            {fruit.price}
-                          </p>
-                          {/* Sepete Ekle Butonu */}
+                          <h3 className="text-2xl font-semibold text-white">{item.name}</h3>
+                          <p className="mt-2 text-gray-300 text-sm">{item.info}</p>
+                          <p className="mt-2 text-lg font-bold text-[#FFA45B]">{item.price}</p>
                           <button
-                            onClick={() => addToCart(fruit)}
+                            onClick={() => addToCart(item)}
                             className="mt-4 px-6 py-2 bg-[#26cc3c] text-white font-semibold rounded-xl shadow-md hover:bg-[#20a330] transition-all duration-300"
                           >
                             Sepete Ekle
@@ -224,7 +228,7 @@ export default function FlowersPage() {
         </section>
       </div>
 
-      {/* Sepet Modal */}
+      {/* Cart Modal */}
       {showCart && (
         <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
           <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-6 w-[500px] shadow-2xl">
@@ -237,10 +241,7 @@ export default function FlowersPage() {
             ) : (
               <div className="space-y-4">
                 {cart.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex justify-between items-center bg-gray-100 rounded-lg p-3"
-                  >
+                  <div key={idx} className="flex justify-between items-center bg-gray-100 rounded-lg p-3">
                     <span>{item.name}</span>
                     <span>{item.price}</span>
                     <button
@@ -258,7 +259,6 @@ export default function FlowersPage() {
               </div>
             )}
 
-            {/* Checkout */}
             <div className="flex justify-between mt-6">
               <button
                 onClick={() => setShowCart(false)}
@@ -276,15 +276,10 @@ export default function FlowersPage() {
               )}
             </div>
 
-            {/* Üyelik Seçenekleri */}
             {checkoutStep === "options" && (
               <div className="mt-6 space-y-4">
-                <button className="w-full px-4 py-2 bg-[#FFA45B] text-white rounded-lg">
-                  Üye Ol
-                </button>
-                <button className="w-full px-4 py-2 bg-[#26cc3c] text-white rounded-lg">
-                  Üye Olmadan Devam Et
-                </button>
+                <button className="w-full px-4 py-2 bg-[#FFA45B] text-white rounded-lg">Üye Ol</button>
+                <button className="w-full px-4 py-2 bg-[#26cc3c] text-white rounded-lg">Üye Olmadan Devam Et</button>
               </div>
             )}
           </div>
@@ -293,9 +288,7 @@ export default function FlowersPage() {
 
       {/* Footer */}
       <footer className="py-10 bg-[#333] text-white text-center relative z-10">
-        <p className="text-lg opacity-80">
-          
-        </p>
+        <p className="text-lg opacity-80">© 2025 Üretenelden | Tüm Hakları Saklıdır</p>
       </footer>
     </div>
   );
