@@ -1,45 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
 
-const fruits = [
+interface Item {
+  name: string;
+  image: string;
+  info: string;
+  price: string;
+  latinName?: string;
+}
+
+interface Category {
+  category: string;
+  image: string;
+  description: string;
+  items: Item[];
+}
+
+const fruits: Category[] = [
   {
-    "category": "Meyveler",
-    "image": "/catalog-sebzemeyve.jpg",
-    "description": "Taze ve lezzetli meyveler. Kahvaltılar, tatlılar ve atıştırmalıklar için ideal seçenekler sunuyoruz.",
-    "items": [
-      { "name": "Elma", "image": "/catalog-sebzemeyve.jpg", "info": "Tatlı ve sulu elma çeşidi. Günlük tüketim için uygundur.", "price": "₺15/kg" },
-      { "name": "Armut", "image": "/catalog-sebzemeyve.jpg", "info": "Yumuşak dokulu ve tatlı armut. Atıştırmalık veya tatlı yapımında idealdir.", "price": "₺18/kg" },
-      { "name": "Muz", "image": "/catalog-sebzemeyve.jpg", "info": "Tropikal lezzetiyle vitamin deposu muz. Enerji verici bir meyvedir.", "price": "₺20/kg" },
-      { "name": "Çilek", "image": "/catalog-sebzemeyve.jpg", "info": "Taze ve kırmızı çilekler. Smoothie ve tatlılar için mükemmel.", "price": "₺25/kg" },
-      { "name": "Üzüm", "image": "/catalog-sebzemeyve.jpg", "info": "Sulu ve tatlı üzüm. Kahvaltı ve atıştırmalık olarak tüketilebilir.", "price": "₺22/kg" }
+    category: "Meyveler",
+    image: "/catalog-sebzemeyve.jpg",
+    description: "Taze ve lezzetli meyveler. Kahvaltılar, tatlılar ve atıştırmalıklar için ideal seçenekler sunuyoruz.",
+    items: [
+      { name: "Elma", image: "/catalog-sebzemeyve.jpg", info: "Tatlı ve sulu elma çeşidi. Günlük tüketim için uygundur.", price: "₺15/kg" },
+      { name: "Armut", image: "/catalog-sebzemeyve.jpg", info: "Yumuşak dokulu ve tatlı armut. Atıştırmalık veya tatlı yapımında idealdir.", price: "₺18/kg" },
+      { name: "Muz", image: "/catalog-sebzemeyve.jpg", info: "Tropikal lezzetiyle vitamin deposu muz. Enerji verici bir meyvedir.", price: "₺20/kg" },
+      { name: "Çilek", image: "/catalog-sebzemeyve.jpg", info: "Taze ve kırmızı çilekler. Smoothie ve tatlılar için mükemmel.", price: "₺25/kg" },
+      { name: "Üzüm", image: "/catalog-sebzemeyve.jpg", info: "Sulu ve tatlı üzüm. Kahvaltı ve atıştırmalık olarak tüketilebilir.", price: "₺22/kg" }
     ]
   },
   {
-    "category": "Sebzeler",
-    "image": "/catalog-sebzemeyve.jpg",
-    "description": "Taze ve doğal sebzeler. Salatalar, yemekler ve sağlıklı tarifler için geniş seçenekler sunuyoruz.",
-    "items": [
-      { "name": "Domates", "image": "/catalog-sebzemeyve.jpg", "info": "Olgun ve sulu domatesler. Salata ve yemeklerde kullanılabilir.", "price": "₺12/kg" },
-      { "name": "Salatalık", "image": "/catalog-sebzemeyve.jpg", "info": "Taze ve çıtır salatalık. Salatalar ve mezeler için idealdir.", "price": "₺10/kg" },
-      { "name": "Biber", "image": "/catalog-sebzemeyve.jpg", "info": "Tatlı ve renkli biber çeşitleri. Yemek ve dolmalık olarak uygundur.", "price": "₺15/kg" },
-      { "name": "Havuç", "image": "/catalog-sebzemeyve.jpg", "info": "Tatlı ve sağlıklı havuç. Atıştırmalık ve yemeklerde kullanılabilir.", "price": "₺8/kg" },
-      { "name": "Patlıcan", "image": "/catalog-sebzemeyve.jpg", "info": "Lezzetli ve taze patlıcan. Kızartma ve yemeklerde mükemmeldir.", "price": "₺14/kg" }
+    category: "Sebzeler",
+    image: "/catalog-sebzemeyve.jpg",
+    description: "Taze ve doğal sebzeler. Salatalar, yemekler ve sağlıklı tarifler için geniş seçenekler sunuyoruz.",
+    items: [
+      { name: "Domates", image: "/catalog-sebzemeyve.jpg", info: "Olgun ve sulu domatesler. Salata ve yemeklerde kullanılabilir.", price: "₺12/kg" },
+      { name: "Salatalık", image: "/catalog-sebzemeyve.jpg", info: "Taze ve çıtır salatalık. Salatalar ve mezeler için idealdir.", price: "₺10/kg" },
+      { name: "Biber", image: "/catalog-sebzemeyve.jpg", info: "Tatlı ve renkli biber çeşitleri. Yemek ve dolmalık olarak uygundur.", price: "₺15/kg" },
+      { name: "Havuç", image: "/catalog-sebzemeyve.jpg", info: "Tatlı ve sağlıklı havuç. Atıştırmalık ve yemeklerde kullanılabilir.", price: "₺8/kg" },
+      { name: "Patlıcan", image: "/catalog-sebzemeyve.jpg", info: "Lezzetli ve taze patlıcan. Kızartma ve yemeklerde mükemmeldir.", price: "₺14/kg" }
     ]
   }
-]
+];
 
 export default function FruitsPage() {
-  const [activeCategory, setActiveCategory] = useState(null);
-  const categoryRefs = useRef({});
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  const handleCategoryClick = (categoryName) => {
+  const handleCategoryClick = (categoryName: string) => {
     setActiveCategory(activeCategory === categoryName ? null : categoryName);
-    
+
     setTimeout(() => {
       categoryRefs.current[categoryName]?.scrollIntoView({
         behavior: "smooth",
@@ -83,7 +97,7 @@ export default function FruitsPage() {
 
           <div className="relative z-10 max-w-6xl mx-auto space-y-24">
             {fruits.map((category, index) => (
-              <div key={index} ref={(el) => (categoryRefs.current[category.category] = el)} className="mb-24">
+              <div key={index}  className="mb-24">
                 <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 1, delay: 0.2 }} className="cursor-pointer" onClick={() => handleCategoryClick(category.category)}>
                   <div className="grid md:grid-cols-2 gap-20 items-center mb-8">
                     <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 1, delay: 0.4 }} className="w-full h-[400px] relative">
@@ -98,16 +112,16 @@ export default function FruitsPage() {
 
                 {activeCategory === category.category && (
                   <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {category.items.map((fruit, idx) => (
+                    {category.items.map((item, idx) => (
                       <div key={idx} className="relative w-full h-96 bg-white/10 backdrop-blur-xl shadow-2xl border border-white/20 rounded-2xl p-4 flex flex-col items-center overflow-hidden transition-transform duration-500 hover:scale-105">
                         <div className="relative w-full h-60 rounded-t-xl overflow-hidden shadow-lg border-b-4 border-white/30">
-                          <Image src={fruit.image} alt={fruit.name} layout="fill" objectFit="cover" className="transition-opacity duration-500 hover:opacity-100" unoptimized />
+                          <Image src={item.image} alt={item.name} layout="fill" objectFit="cover" className="transition-opacity duration-500 hover:opacity-100" unoptimized />
                         </div>
                         <div className="relative w-full flex flex-col items-center text-center p-4 bg-black/50 backdrop-blur-lg rounded-b-xl mt-4 shadow-lg">
-                          <h3 className="text-2xl font-semibold text-white">{fruit.name}</h3>
-                          <p className="mt-2 text-gray-300 text-sm">{fruit.latinName}</p>
-                          <p className="mt-2 text-gray-300 text-sm">{fruit.info}</p>
-                          <p className="mt-2 text-lg font-bold text-[#FFA45B]">{fruit.price}</p>
+                          <h3 className="text-2xl font-semibold text-white">{item.name}</h3>
+                          {item.latinName && <p className="mt-2 text-gray-300 text-sm">{item.latinName}</p>}
+                          <p className="mt-2 text-gray-300 text-sm">{item.info}</p>
+                          <p className="mt-2 text-lg font-bold text-[#FFA45B]">{item.price}</p>
                         </div>
                       </div>
                     ))}
@@ -117,11 +131,8 @@ export default function FruitsPage() {
             ))}
           </div>
         </section>
-
-
       </div>
 
-      {/* Footer */}
       <footer className="py-10 bg-[#333] text-white text-center relative z-10">
         <p className="text-lg opacity-80">© 2025 Karcebal Peyzaj Mimarlık | Tüm Hakları Saklıdır</p>
       </footer>
