@@ -134,7 +134,7 @@ export default function FruitsPage() {
       </div>
 
       <footer className="py-10 bg-[#333] text-white text-center relative z-10">
-        <p className="text-lg opacity-80">© 2025 Karcebal Peyzaj Mimarlık | Tüm Hakları Saklıdır</p>
+        <p className="text-lg opacity-80">© 2025 Üretenelden | Tüm Hakları Saklıdır</p>
       </footer>
     </div>
   );
