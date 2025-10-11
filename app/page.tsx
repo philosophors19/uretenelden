@@ -15,7 +15,7 @@ interface Item {
   image: string;
   info: string;
   price: string;
-  stock: number;
+  stock: number; // ✅ string değil
 }
 
 interface Category {
