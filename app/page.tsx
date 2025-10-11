@@ -15,7 +15,9 @@ interface Item {
   image: string;
   info: string;
   price: string;
-  stock: number; // ✅ string değil
+  category: string;
+  stock: number;
+  quantity?: number;
 }
 
 interface Category {
@@ -212,8 +214,7 @@ export default function Home() {
     loop 
     muted 
     playsInline
-    className="fixed top-0 left-0 w-full h-full object-cover z-0 " 
-    //blur-md
+    className="fixed top-0 left-0 w-full h-full object-cover z-0 blur-md" 
   >
     <source src="/bg.mp4" type="video/mp4" />
   </video>

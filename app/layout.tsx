@@ -4,6 +4,7 @@ import "./globals.css";
 import { CartProvider } from "./context/CartContext";
 import {CartButton} from "./components/CartButton"; // CartButton import edildi
 import CartModal from "./modal/CartModal";   // Modal import edildi
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ export default function RootLayout({
           {/* Modal */}
           <CartModal />
 
+          <SpeedInsights />
           {/* Sayfa içerikleri */}
           {children}
         </CartProvider>

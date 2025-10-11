@@ -10,7 +10,9 @@ interface Item {
   image: string;
   info: string;
   price: string;
-  stock: number; // ✅ string değil
+  category: string;
+  stock: number;
+  quantity?: number;
 }
 
 const allItems: Item[] = [
