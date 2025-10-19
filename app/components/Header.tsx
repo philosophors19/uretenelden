@@ -43,7 +43,7 @@ export default function Header() {
             className="rounded-full object-cover"
           />
           <span className="text-2xl font-bold text-white tracking-wide hover:text-[#FFA45B] transition">
-            Leb Lebin Le
+            Üretenelden
           </span>
         </Link>
 

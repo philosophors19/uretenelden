@@ -56,11 +56,11 @@ export default function ContactSection() {
             </div>
             <div className="flex items-center gap-3">
               <Mail className="text-[#FFA45B]" />
-              <span>info@findikdiyari.com</span>
+              <span>info@üretenelden.com</span>
             </div>
             <div className="flex items-center gap-3">
               <MapPin className="text-[#FFA45B]" />
-              <span>Giresun, Türkiye</span>
+              <span>Şile, Türkiye</span>
             </div>
           </div>
 
@@ -124,7 +124,7 @@ export default function ContactSection() {
 
       {/* 🔹 Alt bilgi */}
       <div className="text-center text-gray-500 text-sm mt-16">
-        © {new Date().getFullYear()} Fındık Diyarı – Tüm Hakları Saklıdır.
+        © {new Date().getFullYear()} Üretenelden – Tüm Hakları Saklıdır.
       </div>
     </section>
   );
