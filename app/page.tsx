@@ -12,8 +12,6 @@ import Footer from "./components/Footer";
 export default function HomePage() {
   return (
     <div className="bg-[#F8F1E5] text-gray-900 font-sans">
-      {/* Header */}
-      <Header />
 
       {/* Hero / Ana bölüm */}
       <HeroSection />
