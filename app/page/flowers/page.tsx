@@ -128,15 +128,20 @@ export default function ProductsPage() {
                   <p className="mt-2 text-gray-300 text-sm">{item.info}</p>
                   <p className="mt-2 text-lg font-bold text-[#FFA45B]">{item.price}</p>
                   <p className="text-gray-400 text-sm mt-1">Stok: {item.stock}</p>
-                  <button
-                    disabled={item.stock <= 0}
-                    onClick={() => addToCart({ ...item, quantity: 1 })}
-                    className={`mt-4 px-6 py-2 font-semibold rounded-xl shadow-md text-white transition-all duration-300 ${
-                      item.stock > 0 ? "bg-[#26cc3c] hover:bg-[#20a330]" : "bg-gray-500 cursor-not-allowed"
-                    }`}
-                  >
-                    {item.stock > 0 ? "Sepete Ekle" : "Stokta Yok"}
-                  </button>
+             <button
+  disabled={item.stock <= 0}
+  onClick={() =>
+    addToCart({
+      ...item,
+      quantity: 1, // quantity burada kesin sayı
+    } as Item) // TypeScript’e bu nesnenin Item tipi olduğunu söylüyoruz
+  }
+  className={`mt-4 px-6 py-2 font-semibold rounded-xl shadow-md text-white transition-all duration-300 ${
+    item.stock > 0 ? "bg-[#26cc3c] hover:bg-[#20a330]" : "bg-gray-500 cursor-not-allowed"
+  }`}
+>
+  {item.stock > 0 ? "Sepete Ekle" : "Stokta Yok"}
+</button>
                 </div>
               </div>
             ))}
