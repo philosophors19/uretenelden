@@ -1,5 +1,3 @@
-/*
-
 "use client";
 import { useState, useEffect } from "react";
 
@@ -44,7 +42,7 @@ export default function AdminPage() {
     if (saved) setProducts(JSON.parse(saved));
   }, []);
 
-  // ✅ Görsel yükleme (şu anlık aktif ama zorunlu değil)
+  // ✅ Görsel yükleme
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, isEdit = false) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -106,7 +104,7 @@ export default function AdminPage() {
     <div className="min-h-screen bg-[#0d0d0d] text-white p-10">
       <h1 className="text-4xl font-bold mb-8 text-[#FFA45B]">Üretici Paneli</h1>
 
-      {/* Ürün Ekleme Butonu 
+      {/* Ürün Ekleme Butonu */}
       <button
         onClick={() => setShowAddModal(true)}
         className="mb-8 px-6 py-3 bg-[#26cc3c] hover:bg-[#20a330] rounded-lg font-semibold transition"
@@ -114,7 +112,7 @@ export default function AdminPage() {
         Yeni Ürün Ekle
       </button>
 
-      {/* Ürün Listesi 
+      {/* Ürün Listesi */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((p) => (
           <div
@@ -152,7 +150,7 @@ export default function AdminPage() {
         ))}
       </div>
 
-      {/* Ürün Ekleme Modal 
+      {/* Ürün Ekleme Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
           <div className="bg-[#1a1a1a]/90 backdrop-blur-xl p-6 rounded-2xl w-96 border border-white/10">
@@ -198,6 +196,7 @@ export default function AdminPage() {
                 ))}
               </select>
 
+              {/* Tip güvenli alt kategori */}
               {formData.category && (
                 <select
                   value={formData.subcategory}
@@ -207,7 +206,7 @@ export default function AdminPage() {
                   className="p-2 rounded bg-black/30 border border-white/10 text-white"
                 >
                   <option value="">Alt Kategori Seç</option>
-                  {categories[formData.category]?.map((sub) => (
+                  {(categories[formData.category as CategoryKey] ?? []).map((sub) => (
                     <option key={sub} value={sub}>
                       {sub}
                     </option>
@@ -253,7 +252,7 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* Ürün Düzenleme Modal 
+      {/* Ürün Düzenleme Modal */}
       {editProduct && (
         <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
           <div className="bg-[#1a1a1a]/90 backdrop-blur-xl p-6 rounded-2xl w-96 border border-white/10">
@@ -298,6 +297,7 @@ export default function AdminPage() {
                 ))}
               </select>
 
+              {/* Tip güvenli alt kategori */}
               {editProduct.category && (
                 <select
                   value={editProduct.subcategory}
@@ -307,13 +307,14 @@ export default function AdminPage() {
                   className="p-2 rounded bg-black/30 border border-white/10 text-white"
                 >
                   <option value="">Alt Kategori Seç</option>
-                  {categories[editProduct.category]?.map((sub) => (
+                  {(categories[editProduct.category as CategoryKey] ?? []).map((sub) => (
                     <option key={sub} value={sub}>
                       {sub}
                     </option>
                   ))}
                 </select>
               )}
+
               <input
                 type="file"
                 accept="image/*"
@@ -355,4 +356,3 @@ export default function AdminPage() {
     </div>
   );
 }
-*/
