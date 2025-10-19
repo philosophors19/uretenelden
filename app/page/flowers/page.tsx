@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "../../context/CartContext";
@@ -35,19 +35,35 @@ const categories = ["Fındık Ürünleri", "Hediyelik Ürünler", "Fındıklı A
 export default function ProductsPage() {
   const { cart, addToCart, showCart, setShowCart } = useCart();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [localProducts, setLocalProducts] = useState<Item[]>([]);
+
+  // 🔹 localStorage'dan ürünleri al
+  useEffect(() => {
+    const saved = localStorage.getItem("products");
+    if (saved) {
+      try {
+        setLocalProducts(JSON.parse(saved));
+      } catch (error) {
+        console.error("Ürün verisi çözümlenemedi:", error);
+      }
+    }
+  }, []);
+
+  // 🔹 admin panelinden gelen + statik ürünler birleştiriliyor
+  const combinedItems = [...allItems, ...localProducts];
 
   const toggleCategory = (category: string) => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories(selectedCategories.filter(c => c !== category));
-    } else {
-      setSelectedCategories([...selectedCategories, category]);
-    }
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
   };
 
   const filteredItems =
     selectedCategories.length === 0
-      ? allItems
-      : allItems.filter(item => selectedCategories.includes(item.category));
+      ? combinedItems
+      : combinedItems.filter((item) => selectedCategories.includes(item.category));
 
   return (
     <div className="bg-[#F8F1E5] min-h-screen relative font-sans text-gray-900">

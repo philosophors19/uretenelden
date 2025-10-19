@@ -3,8 +3,33 @@
 import { motion } from "framer-motion";
 import { useCart } from "../context/CartContext";
 
+
+
 export default function CartModal() {
   const { cart, removeFromCart, updateQuantity, totalPrice, showCart, setShowCart } = useCart();
+
+    const handleWhatsAppCheckout = () => {
+  if (cart.length === 0) return;
+
+  // WhatsApp numaran (ülke kodu dahil, örn: Türkiye -> +905xxxxxxxxx)
+  const phoneNumber = "905319412442";
+
+  // Mesaj içeriğini oluştur
+  let message = "Merhaba 👋%0AÜrün siparişimi vermek istiyorum:%0A%0A";
+
+  cart.forEach((item, index) => {
+    message += `${index + 1}. ${item.name} - ${item.price}%0A`;
+  });
+
+  message += `%0AToplam: ₺${totalPrice}%0A%0AAdres ve teslimat bilgilerini paylaşmak istiyorum.`;
+
+  // WhatsApp linkini oluştur
+  const whatsappLink = `https://wa.me/${phoneNumber}?text=${message}`;
+
+  // WhatsApp'a yönlendir
+  window.open(whatsappLink, "_blank");
+};
+
 
   if (!showCart) return null;
 
@@ -100,9 +125,13 @@ export default function CartModal() {
           >
             Kapat
           </button>
-          <button className="flex-1 px-4 py-2 bg-[#26cc3c] rounded-xl text-white font-semibold hover:bg-[#20a330] transition">
-            Satın Al
-          </button>
+<button
+  onClick={() => handleWhatsAppCheckout()}
+  className="px-4 py-2 bg-[#26cc3c] text-white rounded hover:bg-[#20a330]"
+>
+  WhatsApp ile Satın Al
+</button>
+
         </div>
       </motion.div>
     </motion.div>

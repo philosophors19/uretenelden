@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "./context/CartContext";
-import {CartButton} from "./components/CartButton"; // CartButton import edildi
-import CartModal from "./modal/CartModal";   // Modal import edildi
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import CartModal from "./modal/CartModal";
+import Header from "./components/Header";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,22 +23,23 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="tr">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}>
         <CartProvider>
-          {/* Sepet Butonu */}
-          <CartButton />
+          {/* Her sayfada header görünsün */}
+          <Header />
 
-          {/* Modal */}
+          {/* Sepet Modal (global) */}
           <CartModal />
 
-          <SpeedInsights />
           {/* Sayfa içerikleri */}
-          {children}
+          <main className="pt-20">{children}</main>
+
+          <SpeedInsights />
         </CartProvider>
       </body>
     </html>
