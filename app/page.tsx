@@ -19,11 +19,11 @@ export default function HomePage() {
       {/* Hakkımızda */}
       <AboutSection />
 
-      {/* Hizmetlerimiz */}
-      <ServicesSection />
-
       {/* Ürünlerimiz / Katalog */}
       <CatalogSection />
+      
+      {/* Hizmetlerimiz */}
+      <ServicesSection />
 
       {/* İletişim */}
       <ContactSection />

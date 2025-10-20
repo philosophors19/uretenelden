@@ -83,7 +83,7 @@ export default function CatalogSection() {
         className="relative text-5xl font-bold text-center mb-24 bg-cover bg-center py-24 text-white rounded-2xl overflow-hidden shadow-2xl"
         style={{ backgroundImage: `url('/catalog-sebzemeyve.jpg')` }}
       >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-2xl" />
+        <div className="absolute inset-0 bg-black/60 rounded-2xl" />
         <span className="relative z-10">Ürünlerimiz</span>
       </h2>
 
