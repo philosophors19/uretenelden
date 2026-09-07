@@ -20,10 +20,10 @@ export default function Header() {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const navLinks = [
-    { name: "Hakkında", href: "#about" },
-    { name: "Hizmetler", href: "#services" },
-    { name: "Ürünler", href: "#catalog" },
-    { name: "İletişim", href: "#contact" },
+    { name: "Hakkında", href: "/#about" },
+    { name: "Hizmetler", href: "/#services" },
+    { name: "Ürünler", href: "/#catalog" },
+    { name: "İletişim", href: "/#contact" },
     { name: "Üretici Girişi", href: "/admin" },
   ];
 

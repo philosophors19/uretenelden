@@ -23,7 +23,7 @@ export default function ProducerInvite() {
 
         <p className="text-gray-300 text-lg max-w-3xl mx-auto mb-10 leading-relaxed">
           Kendi el emeğin, doğal ürünlerin ya da taze mahsullerin mi var?  
-          <span className="text-[#FFA45B] font-semibold"> Fındık Diyarı </span> ailesine katılarak
+          <span className="text-[#FFA45B] font-semibold"> Üretenelden </span> ailesine katılarak
           ürünlerini binlerce kişiye ulaştır. Stok, fiyat ve görselleri kolayca yönet.
         </p>
 
@@ -61,15 +61,14 @@ export default function ProducerInvite() {
         <motion.div whileHover={{ scale: 1.05 }}>
           <Link
             href="/admin"
-            className="inline-block bg-[#FFA45B] text-black font-semibold text-lg px-8 py-3 rounded-xl shadow-md hover:bg-[#ff9447] transition-all"
+            className="inline-block bg-[#FFA45B] text-black font-bold text-lg px-8 py-3.5 rounded-xl shadow-lg shadow-[#FFA45B]/20 hover:bg-[#ff9447] transition-all"
           >
-            Admin Paneline Git
+            Üretici Girişi & Kayıt Ol →
           </Link>
         </motion.div>
 
         <p className="text-gray-500 text-sm mt-8">
-          Sadece kayıtlı üreticiler ürün ekleyebilir.  
-          Kayıt olmak için bizimle <a href="#contact" className="text-[#FFA45B] hover:underline">iletişime geçin</a>.
+          Kayıtlı üreticilerimiz ürünlerini anında listeleyebilir ve güncelleyebilir.
         </p>
       </motion.div>
     </section>

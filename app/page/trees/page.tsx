@@ -66,26 +66,8 @@ export default function TreesPage() {
       <div className="absolute inset-0 bg-black/50"></div>
 
       <div className="relative z-10">
-        <header className="fixed top-0 left-0 w-full flex justify-center items-center p-6 text-white bg-black/30 backdrop-blur-lg z-50 transition-all">
-          <nav>
-            <ul className="flex gap-12 text-lg font-medium">
-              <li><Link href="/" className="hover:text-[#FFA45B] transition">Ana Sayfa</Link></li>
-              {fruits.map((category, index) => (
-                <li key={index}>
-                  <button
-                    onClick={() => handleCategoryClick(category.category)}
-                    className="hover:text-[#FFA45B] transition"
-                  >
-                    {category.category}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </header>
-
-        <section id="catalog" className="relative text-white py-40 px-6 lg:px-24">
-          <h2 className="relative text-5xl font-bold text-center mb-16 bg-cover bg-center py-24 text-white rounded-2xl overflow-hidden" style={{ backgroundImage: `url('/service-sut.jpg')` }}>
+        <section id="catalog" className="relative text-white py-12 px-4 sm:px-6 lg:px-24">
+          <h2 className="relative text-3xl sm:text-5xl font-bold text-center mb-12 sm:mb-16 bg-cover bg-center py-16 sm:py-24 text-white rounded-2xl overflow-hidden shadow-2xl" style={{ backgroundImage: `url('/service-sut.jpg')` }}>
             <div className="absolute inset-0 bg-black/50 rounded-2xl"></div>
             <span className="relative z-2">Süt Ve Yumurta Ürünleri</span>
           </h2>
