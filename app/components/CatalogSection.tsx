@@ -171,6 +171,32 @@ export default function CatalogSection() {
       </h2>
 
       <div className="max-w-7xl mx-auto space-y-20 relative z-10">
+        {/* 🔹 İkili Konsept Hızlı Seçim Butonları */}
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="#subscription-section"
+            className="px-5 py-2.5 rounded-2xl bg-[#FFA45B]/15 hover:bg-[#FFA45B]/25 border border-[#FFA45B]/40 text-[#FFA45B] text-xs font-bold transition flex items-center gap-2 shadow"
+          >
+            <span>🌾 Tarladan Sofraya & Abonelik</span>
+            <span className="bg-[#FFA45B] text-black text-[10px] px-1.5 py-0.5 rounded-full font-black">%10 İndirim</span>
+          </Link>
+
+          <Link
+            href="#patisserie-section"
+            className="px-5 py-2.5 rounded-2xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-rose-300 text-xs font-bold transition flex items-center gap-2 shadow"
+          >
+            <span>🍰 Butik Pastane & Lezzet Atölyesi</span>
+            <span className="bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-black">14 Çeşit</span>
+          </Link>
+
+          <Link
+            href="/page/flowers"
+            className="px-5 py-2.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-bold transition flex items-center gap-2 shadow"
+          >
+            <span>📦 Tüm Kataloğu Filtrele</span>
+          </Link>
+        </div>
+
         {/* 🔹 Özel Fırsat Duyurusu */}
         <div className="p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-[#FFA45B]/15 via-black/40 to-[#26cc3c]/15 border border-[#FFA45B]/30 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left shadow-xl">
           <div className="flex items-center gap-3">

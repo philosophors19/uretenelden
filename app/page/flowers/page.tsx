@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "../../context/CartContext";
 import { db } from "../../firebaseConfig";
-import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { 
   ShoppingCart, 
   Check, 
@@ -15,7 +15,10 @@ import {
   Sparkles, 
   ShieldCheck, 
   Truck, 
-  Layers
+  Layers,
+  Cake,
+  Wheat,
+  RefreshCw
 } from "lucide-react";
 
 interface Item {
@@ -24,17 +27,20 @@ interface Item {
   info: string;
   price: string;
   category: string;
+  concept?: "farm" | "bakery" | "subscription";
   stock: number;
   quantity?: number;
 }
 
 const allItems: Item[] = [
+  // --- DOĞAL ÇİFTLİK VE FINDIK ÜRÜNLERİ ---
   { 
     name: "250g Kavrulmuş Fındık", 
     image: "/hazelnut-main.jpg", 
     info: "Giresun yöresine ait taze ve çıtır kavrulmuş 250 gram paket fındık.", 
     price: "₺300", 
-    category: "Kavrulmuş Fındık", 
+    category: "Kavrulmuş Fındık",
+    concept: "farm",
     stock: 10 
   },
   { 
@@ -42,7 +48,8 @@ const allItems: Item[] = [
     image: "/hazelnut-main.jpg", 
     info: "Özel kavrulmuş, çıtır ve lezzetli 500 gram doğal fındık.", 
     price: "₺550", 
-    category: "Kavrulmuş Fındık", 
+    category: "Kavrulmuş Fındık",
+    concept: "farm",
     stock: 10 
   },
   { 
@@ -50,7 +57,8 @@ const allItems: Item[] = [
     image: "/hazelnut-main.jpg", 
     info: "1 kg taze kavrulmuş doğal fındık. (1 kilo ve üzeri alımlarda kilo fiyatı ₺950'dir).", 
     price: "₺1.000", 
-    category: "Kavrulmuş Fındık", 
+    category: "Kavrulmuş Fındık",
+    concept: "farm",
     stock: 10 
   },
   { 
@@ -58,7 +66,8 @@ const allItems: Item[] = [
     image: "/hazelnut-main.jpg", 
     info: "Doğal, katkısız ve taptaze 250 gram çiğ iç fındık.", 
     price: "₺300", 
-    category: "Çiğ İç Fındık", 
+    category: "Çiğ İç Fındık",
+    concept: "farm",
     stock: 10 
   },
   { 
@@ -66,7 +75,8 @@ const allItems: Item[] = [
     image: "/hazelnut-main.jpg", 
     info: "Giresun bahçelerinden özenle seçilmiş 500 gram doğal çiğ iç fındık.", 
     price: "₺500", 
-    category: "Çiğ İç Fındık", 
+    category: "Çiğ İç Fındık",
+    concept: "farm",
     stock: 10 
   },
   { 
@@ -74,7 +84,8 @@ const allItems: Item[] = [
     image: "/hazelnut-main.jpg", 
     info: "Katkısız, taze ve besleyici 1 kg doğal çiğ iç fındık.", 
     price: "₺1.000", 
-    category: "Çiğ İç Fındık", 
+    category: "Çiğ İç Fındık",
+    concept: "farm",
     stock: 10 
   },
   { 
@@ -82,7 +93,8 @@ const allItems: Item[] = [
     image: "/hazelnut-main.jpg", 
     info: "Dalından taze toplanmış doğal ve iri taneli 1 kg kabuklu fındık.", 
     price: "₺375", 
-    category: "Kabuklu Fındık", 
+    category: "Kabuklu Fındık",
+    concept: "farm",
     stock: 10 
   },
   { 
@@ -90,7 +102,8 @@ const allItems: Item[] = [
     image: "/hazelnut-paste-main.jpg", 
     info: "Yoğun fındık oranıyla hazırlanan 325 gram tatlı ve lezzetli fındık ezmesi.", 
     price: "₺400", 
-    category: "Fındık Ezmesi", 
+    category: "Fındık Ezmesi",
+    concept: "farm",
     stock: 10 
   },
   { 
@@ -98,27 +111,171 @@ const allItems: Item[] = [
     image: "/hazelnut-paste-main.jpg", 
     info: "Şeker ilavesiz, %100 saf ve katkısız 325 gram doğal fındık ezmesi.", 
     price: "₺400", 
-    category: "Fındık Ezmesi", 
+    category: "Fındık Ezmesi",
+    concept: "farm",
     stock: 10 
   },
-];
 
-const defaultCategories = [
-  "Kavrulmuş Fındık", 
-  "Çiğ İç Fındık", 
-  "Kabuklu Fındık", 
-  "Fındık Ezmesi"
+  // --- ABONELİK KUTULARI ---
+  {
+    name: "Haftalık Temel Çiftlik Sepeti",
+    image: "/service-sut.jpg",
+    info: "3 Litre Günlük Çiftlik Sütü + 15'li Serbest Gezen Yumurta. Soğuk zincir teslimat.",
+    price: "₺250",
+    category: "Abonelik Paketleri",
+    concept: "subscription",
+    stock: 30,
+  },
+  {
+    name: "Büyük Aile Kahvaltı & Meyve Kutusu",
+    image: "/service-kutu.jpg",
+    info: "5L Günlük Süt, 30'lu Yumurta, 2.5kg Taze Meyve, 500g Köy Peyniri.",
+    price: "₺550",
+    category: "Abonelik Paketleri",
+    concept: "subscription",
+    stock: 20,
+  },
+  {
+    name: "Enerji & Fındık Destek Paketi",
+    image: "/hazelnut-main.jpg",
+    info: "500g Kavrulmuş Fındık, 325g Fındık Ezmesi, 2L Günlük Süt, 15'li Yumurta.",
+    price: "₺675",
+    category: "Abonelik Paketleri",
+    concept: "subscription",
+    stock: 20,
+  },
+
+  // --- BUTİK PASTANE - LEZZET KUTULARI ---
+  {
+    name: "Tiramisu",
+    image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=600&q=80",
+    info: "İtalyan mascarpone kreması ve taze demlenmiş espresso aromasıyla.",
+    price: "₺180",
+    category: "Lezzet Kutuları",
+    concept: "bakery",
+    stock: 25,
+  },
+  {
+    name: "Profiterol",
+    image: "https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=600&q=80",
+    info: "Özel pastacı kreması dolgulu şu hamurları ve akışkan Belçika çikolatası sosu.",
+    price: "₺170",
+    category: "Lezzet Kutuları",
+    concept: "bakery",
+    stock: 25,
+  },
+  {
+    name: "Fıstıklı Cheesecake",
+    image: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=600&q=80",
+    info: "Yoğun Antep fıstığı ezmesi ve kadifemsi peynir dolgulu imza lezzet.",
+    price: "₺220",
+    category: "Lezzet Kutuları",
+    concept: "bakery",
+    stock: 20,
+  },
+  {
+    name: "Çilekli Magnolia",
+    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80",
+    info: "Hafif vanilyalı ipeksi krema, bisküvi kırıntıları ve taze çilek dilimleri.",
+    price: "₺160",
+    category: "Lezzet Kutuları",
+    concept: "bakery",
+    stock: 25,
+  },
+  {
+    name: "Mousse Chocolate",
+    image: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=600&q=80",
+    info: "%70 bitter Belçika çikolatasıyla hazırlanan havadar yoğun mus.",
+    price: "₺190",
+    category: "Lezzet Kutuları",
+    concept: "bakery",
+    stock: 20,
+  },
+  {
+    name: "Orman Meyveli Cheesecake",
+    image: "https://images.unsplash.com/photo-1508737027454-e6454ef45afd?auto=format&fit=crop&w=600&q=80",
+    info: "Frambuaz, böğürtlen ve yaban mersini soslu fırınlanmış New York usulü.",
+    price: "₺210",
+    category: "Lezzet Kutuları",
+    concept: "bakery",
+    stock: 20,
+  },
+
+  // --- BUTİK PASTANE - 14 ÖZEL PASTA ---
+  {
+    name: "Pavlova",
+    image: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=600&q=80",
+    info: "Antep fıstığı ile zenginleştirilmiş hafif ve çıtır beze, seçkin orman meyveleri.",
+    price: "₺650",
+    category: "Pasta Koleksiyonu",
+    concept: "bakery",
+    stock: 15,
+  },
+  {
+    name: "Rose Aura",
+    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80",
+    info: "Yumuşacık böğürtlen ve frambuazlı sponge kekin, yoğun çikolatalı mousse ile buluşması.",
+    price: "₺700",
+    category: "Pasta Koleksiyonu",
+    concept: "bakery",
+    stock: 15,
+  },
+  {
+    name: "Prenses",
+    image: "https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?auto=format&fit=crop&w=600&q=80",
+    info: "Çilek, frambuaz, yaban mersini aromasıyla harmanlaşmış hindistan cevizli kek, prenses kreması.",
+    price: "₺680",
+    category: "Pasta Koleksiyonu",
+    concept: "bakery",
+    stock: 15,
+  },
+  {
+    name: "Bianca",
+    image: "https://images.unsplash.com/photo-1535141192574-5d4897c13136?auto=format&fit=crop&w=600&q=80",
+    info: "Bademin lezzetiyle zenginleşen beyaz sponge kek, prenses ve pastacı kreması, frambuaz.",
+    price: "₺690",
+    category: "Pasta Koleksiyonu",
+    concept: "bakery",
+    stock: 15,
+  },
+  {
+    name: "Festival",
+    image: "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=600&q=80",
+    info: "Karamel sosla kaplanan böğürtlen ve frambuazlı sponge kek, çikolatalı mousse ve krep kırığı.",
+    price: "₺720",
+    category: "Pasta Koleksiyonu",
+    concept: "bakery",
+    stock: 15,
+  },
+  {
+    name: "Lotus",
+    image: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=600&q=80",
+    info: "Lotusun karamelize lezzetiyle buluşan beyaz sponge kek, çilek ve lotus kırıntıları.",
+    price: "₺700",
+    category: "Pasta Koleksiyonu",
+    concept: "bakery",
+    stock: 15,
+  },
+  {
+    name: "San Sebastian",
+    image: "https://images.unsplash.com/photo-1567327613485-fbc7bf196198?auto=format&fit=crop&w=600&q=80",
+    info: "Karamelize yanık üst kabuk ve ortası kremsi akışkan orijinal Bask lezzeti.",
+    price: "₺640",
+    category: "Cheesecake Koleksiyonu",
+    concept: "bakery",
+    stock: 15,
+  },
 ];
 
 export default function ProductsPage() {
   const { addToCart } = useCart();
+  const [selectedConcept, setSelectedConcept] = useState<"all" | "farm" | "bakery" | "subscription">("all");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [localProducts, setLocalProducts] = useState<Item[]>([]);
   const [addedItemName, setAddedItemName] = useState<string | null>(null);
 
-  // 🔹 Firestore ve localStorage'dan ürünleri al
+  // Firestore ve localStorage senkronizasyonu
   useEffect(() => {
-    // 1. LocalStorage yedeğinden hızlı yükleme
     const saved = localStorage.getItem("products");
     if (saved) {
       try {
@@ -128,7 +285,6 @@ export default function ProductsPage() {
       }
     }
 
-    // 2. Firebase Firestore gerçek zamanlı senkronizasyon (Tüm ziyaretçilere anında aktar)
     let unsubscribe = () => {};
     try {
       unsubscribe = onSnapshot(
@@ -143,6 +299,7 @@ export default function ProductsPage() {
                 info: data.info || "",
                 price: data.price,
                 category: data.category || "Fındık Ürünleri",
+                concept: "farm",
                 stock: Number(data.stock) || 0,
               };
             });
@@ -161,19 +318,24 @@ export default function ProductsPage() {
     return () => unsubscribe();
   }, []);
 
-  // 🔹 admin panelinden gelen + statik ürünler birleştiriliyor
   const combinedItems = useMemo(() => {
     return [...allItems, ...localProducts];
   }, [localProducts]);
 
+  // Konsepte göre filtrelenmiş ürün havuzu
+  const conceptItems = useMemo(() => {
+    if (selectedConcept === "all") return combinedItems;
+    return combinedItems.filter((i) => i.concept === selectedConcept);
+  }, [combinedItems, selectedConcept]);
+
   // Dinamik kategoriler listesi
   const availableCategories = useMemo(() => {
-    const cats = new Set<string>(defaultCategories);
-    combinedItems.forEach((item) => {
+    const cats = new Set<string>();
+    conceptItems.forEach((item) => {
       if (item.category) cats.add(item.category);
     });
     return Array.from(cats);
-  }, [combinedItems]);
+  }, [conceptItems]);
 
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
@@ -188,9 +350,9 @@ export default function ProductsPage() {
   };
 
   const filteredItems = useMemo(() => {
-    if (selectedCategories.length === 0) return combinedItems;
-    return combinedItems.filter((item) => selectedCategories.includes(item.category));
-  }, [combinedItems, selectedCategories]);
+    if (selectedCategories.length === 0) return conceptItems;
+    return conceptItems.filter((item) => selectedCategories.includes(item.category));
+  }, [conceptItems, selectedCategories]);
 
   const handleAddToCart = (item: Item) => {
     addToCart({
@@ -199,9 +361,9 @@ export default function ProductsPage() {
       info: item.info,
       price: item.price,
       stock: item.stock,
+      coldChainRequired: item.concept === "bakery" || item.concept === "subscription",
     });
 
-    // Anlık geri bildirim
     setAddedItemName(item.name);
     setTimeout(() => {
       setAddedItemName((current) => (current === item.name ? null : current));
@@ -209,18 +371,10 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="bg-[#121212] min-h-screen relative font-sans text-white selection:bg-[#FFA45B]/30 selection:text-[#FFA45B]">
-      {/* Arka plan video & overlay */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="fixed top-0 left-0 w-full h-full object-cover z-0 blur-md opacity-40 pointer-events-none"
-      >
-        <source src="/bg.mp4" type="video/mp4" />
-      </video>
-      <div className="fixed inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/90 pointer-events-none z-0"></div>
+    <div className="bg-[#0e0e0e] min-h-screen relative font-sans text-white selection:bg-[#FFA45B]/30 selection:text-[#FFA45B]">
+      {/* Arka plan parlama efektleri */}
+      <div className="fixed top-1/4 left-1/4 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed bottom-1/4 right-1/4 w-96 h-96 bg-rose-600/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
         {/* 🔹 Breadcrumb Navigasyonu */}
@@ -229,28 +383,22 @@ export default function ProductsPage() {
             Ana Sayfa
           </Link>
           <ChevronRight className="w-3.5 h-3.5 text-gray-600" />
-          <Link href="/#catalog" className="hover:text-[#FFA45B] transition-colors">
-            Katalog
-          </Link>
-          <ChevronRight className="w-3.5 h-3.5 text-gray-600" />
-          <span className="text-[#FFA45B] font-medium">Fındık ve Kuruyemiş</span>
+          <span className="text-[#FFA45B] font-medium">Tüm Ürünler Kataloğu</span>
         </nav>
 
         {/* 🔹 Hero / Başlık Bölümü */}
-        <div className="relative rounded-2xl overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10 p-6 sm:p-10 mb-8 shadow-2xl">
-          <div className="absolute top-0 right-0 -mt-8 -mr-8 w-48 h-48 bg-[#FFA45B]/10 rounded-full blur-3xl pointer-events-none"></div>
-          
+        <div className="relative rounded-3xl overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10 p-6 sm:p-10 mb-8 shadow-2xl">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFA45B]/15 border border-[#FFA45B]/30 text-[#FFA45B] text-xs font-semibold mb-3">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>%100 Doğal & Yöresel</span>
+                <span>Üretenelden Lezzet Kataloğu</span>
               </div>
               <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
-                Fındık ve Kuruyemiş
+                Ürünlerimiz & Koleksiyonlar
               </h1>
               <p className="mt-2 text-sm sm:text-base text-gray-300 max-w-2xl leading-relaxed">
-                Karadeniz'in bereketli topraklarından toplanan, taze kavrulmuş ve el emeğiyle hazırlanan doğal lezzetler.
+                Tarladan sofraya taze çiftlik mahsulleri, periyodik abonelik kutuları ve usta şeflerimizin butik pasta tasarımları.
               </p>
             </div>
 
@@ -261,59 +409,67 @@ export default function ProductsPage() {
             </div>
           </div>
 
-          {/* 🔹 Mobil Kategori Butonları (Hızlı Kaydırılabilir Hap Menü) */}
-          <div className="mt-6 pt-5 border-t border-white/10 lg:hidden">
-            <div className="flex items-center justify-between gap-2 mb-3">
-              <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-[#FFA45B]" />
-                Kategoriler
-              </span>
-              {selectedCategories.length > 0 && (
-                <button
-                  onClick={clearCategories}
-                  className="text-xs text-[#FFA45B] hover:underline flex items-center gap-1"
-                >
-                  <X className="w-3 h-3" /> Filtreyi Temizle
-                </button>
-              )}
-            </div>
+          {/* 🔹 ÜST KONSEPT SEKMELERİ (TABS) */}
+          <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center gap-2 sm:gap-3">
+            <button
+              onClick={() => {
+                setSelectedConcept("all");
+                clearCategories();
+              }}
+              className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-1.5 ${
+                selectedConcept === "all"
+                  ? "bg-white text-black shadow-lg"
+                  : "bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10"
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              <span>Tüm Ürünler ({combinedItems.length})</span>
+            </button>
 
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none -mx-2 px-2">
-              <button
-                onClick={clearCategories}
-                className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
-                  selectedCategories.length === 0
-                    ? "bg-[#FFA45B] text-black font-semibold shadow-md shadow-[#FFA45B]/30"
-                    : "bg-white/10 text-gray-300 hover:bg-white/20 border border-white/10"
-                }`}
-              >
-                Tümü ({combinedItems.length})
-              </button>
-              {availableCategories.map((cat, idx) => {
-                const count = combinedItems.filter((i) => i.category === cat).length;
-                const isSelected = selectedCategories.includes(cat);
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => toggleCategory(cat)}
-                    className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
-                      isSelected
-                        ? "bg-[#FFA45B] text-black font-semibold shadow-md shadow-[#FFA45B]/30"
-                        : "bg-white/10 text-gray-300 hover:bg-white/20 border border-white/10"
-                    }`}
-                  >
-                    <span>{cat}</span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                        isSelected ? "bg-black/20 text-black" : "bg-white/10 text-gray-400"
-                      }`}
-                    >
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            <button
+              onClick={() => {
+                setSelectedConcept("farm");
+                clearCategories();
+              }}
+              className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-1.5 ${
+                selectedConcept === "farm"
+                  ? "bg-[#FFA45B] text-black shadow-lg"
+                  : "bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10"
+              }`}
+            >
+              <Wheat className="w-4 h-4 text-amber-300" />
+              <span>🌾 Tarladan Doğal & Çiftlik</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setSelectedConcept("bakery");
+                clearCategories();
+              }}
+              className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-1.5 ${
+                selectedConcept === "bakery"
+                  ? "bg-rose-500 text-white shadow-lg shadow-rose-950/40"
+                  : "bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10"
+              }`}
+            >
+              <Cake className="w-4 h-4 text-rose-300" />
+              <span>🍰 Pastane & Butik Tatlı</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setSelectedConcept("subscription");
+                clearCategories();
+              }}
+              className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-1.5 ${
+                selectedConcept === "subscription"
+                  ? "bg-emerald-600 text-white shadow-lg shadow-emerald-950/40"
+                  : "bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10"
+              }`}
+            >
+              <RefreshCw className="w-4 h-4 text-emerald-300" />
+              <span>📦 Abonelik Paketleri</span>
+            </button>
           </div>
         </div>
 
@@ -349,23 +505,20 @@ export default function ProductsPage() {
                   <span
                     className={`w-4 h-4 rounded flex items-center justify-center border text-[10px] ${
                       selectedCategories.length === 0
-                        ? "bg-[#FFA45B] border-[#FFA45B] text-black"
-                        : "border-white/30"
+                        ? "bg-[#FFA45B] border-[#FFA45B] text-black font-bold"
+                        : "border-white/20"
                     }`}
                   >
-                    {selectedCategories.length === 0 && <Check className="w-3 h-3 stroke-[3]" />}
+                    {selectedCategories.length === 0 && "✓"}
                   </span>
-                  <span className="text-sm">Tüm Ürünler</span>
+                  <span className="text-sm">Tümü</span>
                 </div>
-                <span className="text-xs text-gray-500 bg-white/5 px-2 py-0.5 rounded-full">
-                  {combinedItems.length}
-                </span>
+                <span className="text-xs opacity-60">({conceptItems.length})</span>
               </label>
 
               {availableCategories.map((cat, idx) => {
                 const isSelected = selectedCategories.includes(cat);
-                const count = combinedItems.filter((i) => i.category === cat).length;
-
+                const count = conceptItems.filter((i) => i.category === cat).length;
                 return (
                   <label
                     key={idx}
@@ -380,151 +533,131 @@ export default function ProductsPage() {
                       <span
                         className={`w-4 h-4 rounded flex items-center justify-center border text-[10px] ${
                           isSelected
-                            ? "bg-[#FFA45B] border-[#FFA45B] text-black"
-                            : "border-white/30"
+                            ? "bg-[#FFA45B] border-[#FFA45B] text-black font-bold"
+                            : "border-white/20"
                         }`}
                       >
-                        {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                        {isSelected && "✓"}
                       </span>
                       <span className="text-sm">{cat}</span>
                     </div>
-                    <span className="text-xs text-gray-500 bg-white/5 px-2 py-0.5 rounded-full">
-                      {count}
-                    </span>
+                    <span className="text-xs opacity-60">({count})</span>
                   </label>
                 );
               })}
             </div>
 
-            {/* Yan Bilgi Kartları */}
-            <div className="mt-8 pt-6 border-t border-white/10 space-y-4">
-              <div className="flex items-start gap-3 text-xs text-gray-300 bg-white/5 p-3 rounded-xl border border-white/5">
-                <Truck className="w-5 h-5 text-[#FFA45B] flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold text-white">Hızlı & Güvenli Teslimat</p>
-                  <p className="text-gray-400 mt-0.5">Tazeliği bozulmadan kapınıza kadar ulaştırıyoruz.</p>
-                </div>
+            {/* Güvenlik ve Lojistik Rozetleri */}
+            <div className="mt-8 pt-6 border-t border-white/10 space-y-3">
+              <div className="flex items-center gap-3 text-xs text-gray-300">
+                <Truck className="w-4 h-4 text-[#FFA45B] flex-shrink-0" />
+                <span>Soğuk Zincir ve Hızlı Kargo</span>
               </div>
-
-              <div className="flex items-start gap-3 text-xs text-gray-300 bg-white/5 p-3 rounded-xl border border-white/5">
-                <ShieldCheck className="w-5 h-5 text-[#26cc3c] flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold text-white">Doğallık Garantisi</p>
-                  <p className="text-gray-400 mt-0.5">%100 katkısız ve yerli üretim fındık çeşitleri.</p>
-                </div>
+              <div className="flex items-center gap-3 text-xs text-gray-300">
+                <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <span>%100 Doğallık & İade Garantisi</span>
               </div>
             </div>
           </aside>
 
-          {/* 🔹 Ürünler Izgarası */}
+          {/* 🔹 Ürün Listesi Izgarası */}
           <main className="flex-1 w-full">
             {filteredItems.length === 0 ? (
-              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-12 text-center flex flex-col items-center justify-center">
-                <div className="w-16 h-16 rounded-full bg-[#FFA45B]/10 flex items-center justify-center mb-4 text-[#FFA45B]">
-                  <SlidersHorizontal className="w-8 h-8" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">Ürün Bulunamadı</h3>
-                <p className="text-gray-400 text-sm max-w-md mb-6">
-                  Seçtiğiniz filtreleme kriterlerine uygun ürün bulunamadı. Lütfen filtrelerinizi sıfırlamayı deneyin.
-                </p>
+              <div className="text-center py-20 bg-white/5 rounded-3xl border border-dashed border-white/15 p-8">
+                <p className="text-lg font-bold text-gray-300">Bu kategoride ürün bulunamadı.</p>
                 <button
                   onClick={clearCategories}
-                  className="px-6 py-2.5 bg-[#FFA45B] text-black font-semibold rounded-xl hover:bg-[#ff9542] transition-colors"
+                  className="mt-4 px-5 py-2 bg-[#FFA45B] text-black text-xs font-bold rounded-xl"
                 >
                   Filtreleri Temizle
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredItems.map((item, idx) => {
                   const isJustAdded = addedItemName === item.name;
 
                   return (
                     <div
                       key={idx}
-                      className="group bg-white/5 hover:bg-white/10 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-[#FFA45B]/40 p-4 flex flex-col justify-between overflow-hidden transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1 relative"
+                      className="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-[#FFA45B]/40 rounded-3xl p-4 transition-all duration-300 flex flex-col justify-between shadow-lg"
                     >
                       <div>
                         {/* Ürün Görseli */}
-                        <div className="relative w-full h-52 sm:h-56 rounded-xl overflow-hidden shadow-md bg-black/40">
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            fill
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            unoptimized
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+                        <div className="relative w-full h-48 rounded-2xl overflow-hidden mb-3.5 bg-black/40">
+                          {item.image.startsWith("http") ? (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <Image
+                              src={item.image}
+                              alt={item.name}
+                              fill
+                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                              className="object-cover group-hover:scale-105 transition-transform duration-500"
+                              unoptimized
+                            />
+                          )}
+
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
 
                           {/* Kategori Etiketi */}
                           {item.category && (
-                            <span className="absolute top-3 left-3 bg-black/60 backdrop-blur-md border border-white/10 text-[#FFA45B] text-[11px] font-semibold px-2.5 py-1 rounded-full">
+                            <span className="absolute top-2.5 left-2.5 bg-black/60 backdrop-blur-md text-[#FFA45B] text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/10">
                               {item.category}
                             </span>
                           )}
 
-                          {/* Stok Durumu Rozeti */}
-                          <span
-                            className={`absolute top-3 right-3 text-[11px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-md ${
-                              item.stock > 5
-                                ? "bg-emerald-500/80 text-white"
-                                : item.stock > 0
-                                ? "bg-amber-500/80 text-white"
-                                : "bg-rose-500/80 text-white"
-                            }`}
-                          >
-                            {item.stock > 5
-                              ? "Stokta Var"
-                              : item.stock > 0
-                              ? `Son ${item.stock} Adet`
-                              : "Tükendi"}
+                          {/* Konsept Rozeti */}
+                          <span className="absolute top-2.5 right-2.5 bg-black/60 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-0.5 rounded-full border border-white/10">
+                            {item.concept === "bakery"
+                              ? "🍰 Pastane"
+                              : item.concept === "subscription"
+                              ? "📦 Abonelik"
+                              : "🌾 Çiftlik"}
                           </span>
                         </div>
 
-                        {/* Ürün Bilgileri */}
-                        <div className="pt-4 px-1">
-                          <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-[#FFA45B] transition-colors leading-snug">
-                            {item.name}
-                          </h3>
-                          <p className="mt-1.5 text-xs sm:text-sm text-gray-300 line-clamp-2 min-h-[36px]">
-                            {item.info}
-                          </p>
-                        </div>
+                        {/* Başlık ve Açıklama */}
+                        <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-[#FFA45B] transition-colors leading-snug">
+                          {item.name}
+                        </h3>
+                        <p className="mt-1 text-xs text-gray-300 line-clamp-2 min-h-[32px]">
+                          {item.info}
+                        </p>
                       </div>
 
-                      {/* Fiyat & Satın Al Butonu */}
-                      <div className="pt-4 mt-3 border-t border-white/10 px-1">
-                        <div className="flex items-baseline justify-between mb-3">
-                          <span className="text-xs text-gray-400">Fiyat:</span>
-                          <span className="text-xl sm:text-2xl font-black text-[#FFA45B]">
+                      {/* Fiyat ve Sepete Ekle */}
+                      <div className="pt-3 mt-3 border-t border-white/10 flex items-center justify-between gap-3">
+                        <div>
+                          <span className="text-[10px] text-gray-400 block">Fiyat</span>
+                          <span className="text-xl font-black text-[#FFA45B]">
                             {item.price}
                           </span>
                         </div>
 
                         <button
-                          disabled={item.stock <= 0}
                           onClick={() => handleAddToCart(item)}
-                          className={`w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-lg ${
-                            item.stock <= 0
-                              ? "bg-white/10 text-gray-400 cursor-not-allowed border border-white/5"
-                              : isJustAdded
-                              ? "bg-emerald-500 text-white shadow-emerald-500/30 scale-[0.98]"
-                              : "bg-[#26cc3c] hover:bg-[#20a330] text-white shadow-green-900/30 active:scale-[0.98]"
+                          className={`px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all shadow-md active:scale-95 ${
+                            isJustAdded
+                              ? "bg-emerald-500 text-white"
+                              : "bg-[#26cc3c] hover:bg-[#20a330] text-white"
                           }`}
                         >
                           {isJustAdded ? (
                             <>
-                              <Check className="w-4 h-4 stroke-[3]" />
-                              <span>Sepete Eklendi!</span>
-                            </>
-                          ) : item.stock > 0 ? (
-                            <>
-                              <ShoppingCart className="w-4 h-4" />
-                              <span>Sepete Ekle</span>
+                              <Check className="w-3.5 h-3.5 stroke-[3]" />
+                              <span>Eklendi</span>
                             </>
                           ) : (
-                            <span>Stokta Yok</span>
+                            <>
+                              <ShoppingCart className="w-3.5 h-3.5" />
+                              <span>Sepete Ekle</span>
+                            </>
                           )}
                         </button>
                       </div>

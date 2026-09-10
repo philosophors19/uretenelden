@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "./context/CartContext";
 import CartModal from "./modal/CartModal";
+import SubscriptionManagerModal from "./components/SubscriptionManagerModal";
 import Header from "./components/Header";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -17,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Üretenelden",
-  description: "Doğal ürünler ve el emeği lezzetler",
+  title: "Üretenelden | Doğal Çiftlik & Butik Pastane",
+  description: "Doğal ürünler, tarladan kapınıza periyodik abonelikler ve el emeği butik pastane lezzetleri",
 };
 
 export default function RootLayout({
@@ -35,6 +36,9 @@ export default function RootLayout({
 
           {/* Sepet Modal (global) */}
           <CartModal />
+
+          {/* Abonelik Yönetim Modalı (global) */}
+          <SubscriptionManagerModal />
 
           {/* Sayfa içerikleri */}
           <main className="pt-20">{children}</main>
